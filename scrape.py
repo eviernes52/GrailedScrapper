@@ -18,8 +18,8 @@ options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
 driver = webdriver.Chrome(service=service, options=options)
 
+#change url to whatever you want to scrape- either being the grailed trending pgaes or grailed product post pages
 image_url = "https://process.fs.grailed.com/AJdAgnqCST4iPtnUxiGtTz/auto_image/cache=expiry:max/rotate=deg:exif/resize=height:335/output=quality:50/no_metadata/compress/IDcwcOV7Tmqkc6JRDdvu"
-
 
 
 #image from grailed function
