@@ -33,20 +33,33 @@ def get_image_from_grailed(wd, delay, max_images):
 
     #no dup urls
     image_urls = set()
+    skips = 0
 
     while len(image_url) < max_images:
         scroll_down(wd)
 
         thumbnails = wd.find_elements(By.CLASS_NAME, "Photo_picture__g7Lsj")    #might be able to be replaced on with "listing-cover-photo"
 
-        for thumbnail in thumbnails[len(image_urls): max_images]:
-             try: 
-                img.click()
-                time.sleep(delay)
+        for img in thumbnails[len(image_urls): max_images]:
+            try: 
+                    img.click()
+                    time.sleep(delay)
             except: 
                 continue
             
-            images = wd.find_elements(By.CLASS_NAME, "Photo_picture__g7Lsj")
+
+        images = wd.find_elements(By.CLASS_NAME, "Photo_picture__g7Lsj")
+        
+        for image in images:
+                if image.get_attribute('src') in image_urls:
+                        max_images += 1
+                        skips += 1
+                        break
+                
+                if image.get_attribute('src') and 'http' in image.get_attribute('src'):
+                    image_urls.add(image.get_attribute('src'))
+                    print(f"Found: {len(image_urls)}")
+    return image_urls
 
 #image download function
 def download_image(download_path, url, file_name):
@@ -66,8 +79,12 @@ def download_image(download_path, url, file_name):
 download_image("", image_url, "test.jpg")
 
 
-get_image_from_grailed(wd, 2, 10 )
-# ...
+urls = get_image_from_grailed(wd, 2, 10 )
+
+for i, url in enumerate(urls):
+	download_image("imgs/", url, str(i) + ".jpg")
+
+#quit driver and webdriver
 wd.quit()
 driver.quit()
 
