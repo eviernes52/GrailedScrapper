@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import requests
@@ -8,11 +9,10 @@ from PIL import Image
 
 wd = webdriver.Chrome(service=Service("C:\\Users\\evier\\Desktop\\Python Projects\\GrailedScrapper\\chromedriver.exe"))
 
+#options must be set in order to work with updated selenium
 options = options = Options()
 options.add_experimental_option("detach", True)
-
 service = Service(executable_path="C:\\Users\\evier\\Desktop\\Python Projects\\GrailedScrapper\\chromedriver.exe")
-
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
@@ -31,6 +31,22 @@ def get_image_from_grailed(wd, delay, max_images):
     url = "https://www.grailed.com/listings/43469132-dries-van-noten-dries-van-noten-vellow-backzip-bomber-jacket"
     wd.get(url)
 
+    #no dup urls
+    image_urls = set()
+
+    while len(image_url) < max_images:
+        scroll_down(wd)
+
+        thumbnails = wd.find_elements(By.CLASS_NAME, "Photo_picture__g7Lsj")    #might be able to be replaced on with "listing-cover-photo"
+
+        for thumbnail in thumbnails[len(image_urls): max_images]:
+             try: 
+                img.click()
+                time.sleep(delay)
+            except: 
+                continue
+            
+            images = wd.find_elements(By.CLASS_NAME, "Photo_picture__g7Lsj")
 
 #image download function
 def download_image(download_path, url, file_name):
@@ -52,7 +68,8 @@ download_image("", image_url, "test.jpg")
 
 get_image_from_grailed(wd, 2, 10 )
 # ...
-#driver.quit()
+wd.quit()
+driver.quit()
 
 
 
